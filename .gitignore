@@ -1,0 +1,11 @@
+Qenv/
+__pycache__/
+*.pyc
+logs/
+.env
+check_predict.py
+check_missing_field.py
+check_pipeline_match.py
+data/
+models/
+olist.db

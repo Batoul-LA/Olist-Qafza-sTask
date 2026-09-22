@@ -1,0 +1,12 @@
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  model_file: "models/final_model.pkl"
+  feature_columns_file: "models/feature_columns.json"
+
+model:
+  threshold: 0.5
+
+logging:
+  level: "INFO"
+  log_file: "logs/app.log"
