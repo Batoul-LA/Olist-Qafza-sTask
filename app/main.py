@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List
 import sys
 import os
+request_count = {"predict": 0, "predict_batch": 0}
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -47,6 +48,7 @@ def model_info():
 @app.post("/predict", response_model=PredictionResponse)
 def predict_single(order: Order):
     try:
+        request_count["predict"] += 1
         result = predict(order.model_dump(), model=model, feature_columns=feature_columns, cfg=config)
         return result[0]
     except ValueError as e:
@@ -58,6 +60,7 @@ def predict_single(order: Order):
 @app.post("/predict-batch", response_model=List[PredictionResponse])
 def predict_batch(orders: List[Order]):
     try:
+        request_count["predict_batch"] += 1
         results = []
         for order in orders:
             r = predict(order.model_dump(), model=model, feature_columns=feature_columns, cfg=config)
@@ -67,3 +70,8 @@ def predict_batch(orders: List[Order]):
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal prediction error")
+
+    @app.get("/metrics")
+    def metrics():
+        return {"total_predict_requests": request_count["predict"],
+            "total_batch_requests": request_count["predict_batch"]}
