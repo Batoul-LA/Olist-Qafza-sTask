@@ -6,6 +6,9 @@ logs/
 check_predict.py
 check_missing_field.py
 check_pipeline_match.py
-data/
+data/raw/*
+data/processed/*
+!data/raw.dvc
+!data/processed.dvc
 models/
 olist.db
