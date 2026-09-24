@@ -3,6 +3,7 @@ import joblib
 import json
 from src.config_loader import load_config
 from src.preprocessing import preprocess
+from src.validation import validate_order
 from src.logger import get_logger
 
 config = load_config()
@@ -23,6 +24,11 @@ def load_artifacts(cfg=None):
 
 
 def predict(data, model=None, feature_columns=None, cfg=None):
+    is_valid, errors = validate_order(data)
+    if not is_valid:
+        logger.error(f"Validation failed | input={data} | errors={errors}")
+        raise ValueError(f"Invalid input: {errors}")
+
     start_time = time.time()
 
     try:
