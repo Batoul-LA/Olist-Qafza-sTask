@@ -1,3 +1,5 @@
+import numpy as np
+
 from src.predict import predict
 
 def test_predict_valid_order():
@@ -10,7 +12,26 @@ def test_predict_valid_order():
         "num_payment_methods": 1,
         "customer_state": "SP"
     }
-    result = predict(sample_order)
+    class DummyModel:
+        def predict(self, X):
+            return [1]
+
+        def predict_proba(self, X):
+            return np.array([[0.2, 0.8]])
+
+    feature_columns = [
+        "num_items",
+        "total_price",
+        "total_freight",
+        "total_payment_value",
+        "num_payment_methods",
+        "purchase_month",
+        "purchase_weekday",
+        "purchase_hour",
+        "state_SP",
+    ]
+
+    result = predict(sample_order, model=DummyModel(), feature_columns=feature_columns)
     assert "prediction" in result[0]
     assert "probability" in result[0]
     assert result[0]["prediction"] in [0, 1]
